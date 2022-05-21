@@ -7,32 +7,38 @@ export default function GamePage() {
   const { id } = useParams();
   console.log(id);
   const [visibility, setVisibility] = useState(false);
+  const [winner, setWinner] = useState(false);
   const context = useContext(cardsContext);
-  let { time1, time2, cards } = context;
+  let { cards, time1, time2, setTime1, setTime2 } = context;
   const navigate = useNavigate();
 
   function setScore(gotRight) {
     if (gotRight === 1) {
-      time1++;
+      setTime1(time1+1);
     }
 
     if (gotRight === 2) {
-      time2++;
+      setTime2(time2+1);
     }
+
 
     if (id < cards.length) {
       navigate(`/jogar/${parseInt(id) + 1}`);
       setVisibility(false);
     } else {
-      if (time1 > time2) {
-        alert("Time 1 ganhou!");
-      }
-      if (time1 < time2) {
-        alert("Time 2 ganhou!");
-      }
-      if (time1 === time2) {
-        alert("Empate!!!");
-      }
+      setWinner(true);
+    }
+  }
+
+  function showWinner() {
+    if (time1 > time2) {
+      alert("Time 1 ganhou!");
+    }
+    if (time1 < time2) {
+      alert("Time 2 ganhou!");
+    }
+    if (time1 === time2) {
+      alert("Empate!!!");
     }
   }
 
@@ -49,10 +55,11 @@ export default function GamePage() {
         <>
           <p>{cards[id - 1].answer}</p>
           <div>
-            <button onClick={() => setScore(1)}>TIME 1 ACERTOU</button>
-            <button onClick={() => setScore(0)}>NINGUÉM ACERTOU :(</button>
-            <button onClick={() => setScore(2)}>TIME 2 ACERTOU</button>
+            <button className="time1" onClick={() => setScore(1)}>TIME 1 ACERTOU</button>
+            <button className="time2" onClick={() => setScore(0)}>NINGUÉM ACERTOU</button>
+            <button className="time3" onClick={() => setScore(2)}>TIME 2 ACERTOU</button>
           </div>
+          {winner ? <button className="winner" onClick={() => showWinner()}>VEJA O GANHADOR</button> : <></>}
         </>
       )}
     </Container>
@@ -89,7 +96,38 @@ const Container = styled.div`
     margin-bottom: 80px;
   }
 
+  .winner {
+    margin-top: 40px;
+  }
+
+  button {
+    background-color: #98d2fa;
+    border: none;
+    border-radius: 5px;
+    height: 30px;
+    font-weight: bold;
+    color: #000000;
+    box-shadow: 5px 5px 5px #323424;
+  }
+
   div {
     display: flex;
+    justify-content: space-around;
+
+    button {
+      width: 30%;
+      border-radius: 5px;
+      border: none;
+      box-shadow: 5px 10px 15px #323424;
+      height: 40px;
+    }
+
+    .time1, .time3 {
+      background-color: #5DBF17;
+    }
+
+    .time2 {
+      background-color: #F29F05;
+    }
   }
 `;
